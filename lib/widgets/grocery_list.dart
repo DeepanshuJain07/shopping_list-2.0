@@ -18,6 +18,8 @@ class _GroceryListState extends State<GroceryList> {
       context,
     ).push<GroceryItem>(MaterialPageRoute(builder: (ctx) => const NewItem()));
 
+    
+
     if (newItem == null) {
       return;
     }
@@ -96,7 +98,8 @@ class _GroceryListState extends State<GroceryList> {
           
         
       );
-    }
+    } // Yaha par humne Extract method ka use kiya hai, jisme hum apne widgets ko alag se helper method me nikal lete hai.
+    //hum yaha par aur bhi kayi tariko ka use kar sakte hai.
     
     
     return Scaffold(
