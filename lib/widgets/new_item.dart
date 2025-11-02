@@ -5,6 +5,7 @@ import 'package:shopping_list_1/data/categories.dart';
 import 'package:shopping_list_1/models/category.dart';
 // import 'package:shopping_list_1/models/grocery_item.dart';
 import'package:http/http.dart' as http;
+import 'package:shopping_list_1/models/grocery_item.dart';
 
 class NewItem extends StatefulWidget {
   const NewItem({super.key});
@@ -21,10 +22,15 @@ class _NewItemState extends State<NewItem> {
   var enteredName = " ";
   var enteredQuantity = 1;
   var selectedcategory = categories[Categories.vegetables]!;
+  var isSending= false;
 
   void _saveItem() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      setState(() {
+         isSending = true;
+      });
+     
       final url = Uri.https(
         'flutter-prep1-32dff-default-rtdb.firebaseio.com', 'shopping-list.json');
   final response  =await http.post(url,headers: {
@@ -39,11 +45,15 @@ class _NewItemState extends State<NewItem> {
 
       print(response.body);
       print(response.statusCode);
+
+      final Map<String,dynamic> resData =json.decode(response.body); 
       
       if(!context.mounted){
        return;
       }
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(
+        GroceryItem(id: resData['name'], name:enteredName, quantity:enteredQuantity, category: selectedcategory)
+      );
     }
   }
 
@@ -142,12 +152,12 @@ class _NewItemState extends State<NewItem> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () {
+                    onPressed:isSending ? null: () {
                       _formKey.currentState!.reset();
                     },
                     child: Text('Reset'),
                   ),
-                  ElevatedButton(onPressed: _saveItem, child: Text('Add Item')),
+                  ElevatedButton(onPressed: isSending? null: _saveItem, child: isSending? const SizedBox(height: 16,width: 16,child: CircularProgressIndicator(),):const Text('Add Item')),
                 ],
               ),
             ],
