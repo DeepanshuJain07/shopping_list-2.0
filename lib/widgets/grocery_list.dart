@@ -98,11 +98,17 @@ class _GroceryListState extends State<GroceryList> {
     );
     final response = await http.delete(url);
 
+    if(!mounted){
+      return;
+    }
+
     if (response.statusCode >= 400) {
       setState(() {
         _groceryItems.insert(groceryItemIndex, newItem);
       });
     }
+  
+   
   
     ScaffoldMessenger.of(context).clearSnackBars();
    
